@@ -68,6 +68,12 @@
   .fila.llego .n{color:var(--ok)}
   @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
   .pop{animation:pop .6s ease-out}
+  .gev{margin-top:14px}
+  .gev h3{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;text-align:center}
+  .gpub{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0a0a0b;margin-bottom:8px}
+  .gpub .lugar{flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#0a0a0a;background:var(--silver)}
+  .gpub .nom{font-weight:800;font-size:17px}
+  .gpub .pr{font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -85,6 +91,12 @@
 
   <!-- ===== Registro (público) ===== -->
   <section id="vistaRegistro">
+    <div class="card hide" id="cardGanadores">
+      <h2 class="plata" style="margin:0 0 4px;font-size:22px;text-align:center">🏆 Ganadores</h2>
+      <p class="sub" style="text-align:center;margin-bottom:6px">¡Felicidades a todos los ganadores!</p>
+      <div id="listaGanadoresPub"></div>
+    </div>
+
     <div class="card">
       <form id="form" autocomplete="on">
         <label for="nombre">Nombre</label>
@@ -311,7 +323,33 @@
   $('buscar').addEventListener('input', pintarGuest);
   $('btnRecargar').onclick = cargarGuest;
 
+  // ---------- Ganadores públicos ----------
+  function lugarCorto(premio, i) {
+    var t = String(premio || '').toLowerCase();
+    if (t.indexOf('primer') >= 0 || t.indexOf('1') === 0) return '1er';
+    if (t.indexOf('segundo') >= 0 || t.indexOf('2') === 0) return '2do';
+    if (t.indexOf('tercer') >= 0 || t.indexOf('3') === 0) return '3er';
+    return (i + 1) + 'º';
+  }
+  function pintarGanadores(r) {
+    var lista = (r && r.ganadores) || [];
+    if (!lista.length) return;
+    var grupos = [], porEvento = {};
+    lista.forEach(function (g) {
+      if (!porEvento[g.evento]) { porEvento[g.evento] = []; grupos.push(g.evento); }
+      porEvento[g.evento].push(g);
+    });
+    $('listaGanadoresPub').innerHTML = grupos.map(function (ev) {
+      return '<div class="gev"><h3>' + esc(ev) + '</h3>' + porEvento[ev].map(function (g, i) {
+        return '<div class="gpub"><div class="lugar">' + lugarCorto(g.premio, i) + '</div><div><div class="nom">' + esc(g.nombre) +
+          '</div><div class="pr">' + esc(g.premio) + (g.fecha ? ' · ' + esc(g.fecha) : '') + '</div></div></div>';
+      }).join('') + '</div>';
+    }).join('');
+    $('cardGanadores').classList.remove('hide');
+  }
+
   // ---------- Inicio ----------
+  llamar('ganadoresPublicos').then(pintarGanadores).catch(function () {});
   if (hayGAS) {
     llamar('obtenerInfo').then(pintarInfo).catch(function (e) { $('evento').textContent = 'Error'; mostrar($('msg'), e.message, 'err'); });
   } else {
