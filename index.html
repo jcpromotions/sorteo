@@ -42,10 +42,11 @@
   .pill{font-size:12px;padding:6px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
   .pill b{color:var(--text)}
   .premios{display:grid;gap:12px}
-  .premio{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0a0a0b}
-  .premio img{width:100%;display:block}
-  .premio .pi{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .premio .val{font-size:24px;font-weight:900}
+  .premios{gap:8px!important}
+  .premio{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0a0a0b}
+  .premio .lugar{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#0a0a0a;background:var(--silver)}
+  .premio .pt{font-weight:800;font-size:16px}
+  .premio .pd{font-size:13px;color:var(--muted);line-height:1.4;margin-top:2px}
   .nota{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
   .hide{display:none!important}
   footer{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
@@ -115,8 +116,7 @@
     <div class="card">
       <h2 class="plata" style="margin:0 0 12px;font-size:20px">Premios</h2>
       <div class="premios" id="premios"></div>
-      <p class="nota">Premios en consumo dentro de Villa Medusa. No canjeables por efectivo.<br>
-        Cada persona puede ganar una sola vez; los ganadores de sorteos anteriores no vuelven a participar.</p>
+      <p class="nota">Premios para disfrutar en Villa Medusa. Cada persona gana una sola vez.</p>
     </div>
     <footer><a href="#" id="linkAdmin">Staff</a></footer>
   </section>
@@ -201,10 +201,13 @@
         (info.cierreSorteoTexto ? ' · cierra ' + esc(info.cierreSorteoTexto) : '') + '</span>' +
       '<span class="pill">Guest list: <b>' + (info.guestListAbierta ? 'abierta' : 'cerrada') + '</b>' +
         (info.cierreGuestListTexto ? ' · cierra ' + esc(info.cierreGuestListTexto) : '') + '</span>';
+    var LUGARES = ['1er lugar', '2do lugar', '3er lugar'];
     $('premios').innerHTML = info.premios.map(function (p, i) {
-      return '<div class="premio">' + (p.flyer ? '<img loading="lazy" alt="Flyer ' + esc(p.nombre) + '" src="' + esc(p.flyer) + '">' : '') +
-        '<div class="pi"><div><div class="sub">' + (i + 1) + 'º premio</div><b>' + esc(p.nombre) + '</b></div>' +
-        '<div class="val plata">' + dinero(p.valor) + '</div></div></div>';
+      var det = String(p.detalle || '').split(/\s*[·•|]\s*|\n/).filter(Boolean);
+      return '<div class="premio"><div class="lugar">' + (i + 1) + '</div><div>' +
+        '<div class="pt">' + (LUGARES[i] || (i + 1) + 'º lugar') + '</div>' +
+        (det.length ? '<div class="pd">' + det.map(esc).join(' · ') + '</div>' : '<div class="pd">' + esc(p.nombre) + '</div>') +
+        '</div></div>';
     }).join('');
     if (!info.guestListAbierta) {
       $('btnReg').disabled = true; $('btnReg').textContent = 'REGISTRO CERRADO';
