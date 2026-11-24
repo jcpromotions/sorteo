@@ -109,9 +109,14 @@
   .acc li{font-size:14px;padding:3px 0;color:#d4d4d8}
   .acc li::before{content:"✅ ";}
   .carrusel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;-webkit-overflow-scrolling:touch}
-  .gcard{flex:0 0 72%;max-width:240px;scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;background:#0a0a0b;overflow:hidden;text-align:center}
-  .gcard .ph{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#2a2a2e,#0a0a0b)}
-  .gcard .ph img{width:100%;height:100%;object-fit:cover}
+  .gcard{flex:0 0 38%;max-width:150px;scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;background:#0a0a0b;overflow:hidden;text-align:center}
+  .gcard .ph{aspect-ratio:9/14;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#2a2a2e,#0a0a0b)}
+  .gcard .ph img{width:100%;height:100%;object-fit:cover;object-position:top;cursor:zoom-in}
+  .gcard .ini{width:64px!important;height:64px!important;font-size:24px!important}
+  .gcard .gn{font-size:13px!important}
+  .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+  .lb img{max-width:100%;max-height:100%;border-radius:12px}
+  .lb button{position:absolute;top:12px;right:12px;width:auto;margin:0;padding:8px 14px;background:#1d1d21;color:#fff;border:1px solid var(--line)}
   .gcard .ini{width:96px;height:96px;border-radius:50%;background:var(--silver);color:#0a0a0a;font-weight:900;font-size:34px;display:flex;align-items:center;justify-content:center}
   .gcard .gi{padding:10px}
   .gcard .gn{font-weight:800;font-size:15px}
@@ -195,6 +200,7 @@
     <div class="card">
       <h2 class="plata ttl">Reglas</h2>
       <ul class="reglas">
+        <li>Debes tener 21 años o más.</li>
         <li>El registro es gratis y es una sola vez por persona.</li>
         <li>Al registrarte entras a la guest list y al sorteo (si el sorteo sigue abierto).</li>
         <li>Los ganadores de sorteos anteriores no vuelven a participar.</li>
@@ -250,6 +256,7 @@
   </section>
 </div>
 
+<div class="lb hide" id="lb" onclick="this.classList.add('hide')"><img id="lbImg" alt=""><button type="button">Cerrar ✕</button></div>
 <div class="sticky" id="sticky"><button id="btnSticky" type="button">REGISTRARME GRATIS</button></div>
 
 <script>
@@ -460,12 +467,20 @@
     if (t.indexOf('tercer') >= 0 || t.indexOf('3') === 0) return '3er';
     return (i + 1) + 'º';
   }
+  // Flyers de los ganadores (archivos en la carpeta ganadores/ del repo)
+  var FOTOS = {
+    'leidy la': 'ganadores/leidy-la',
+    'hilda elia': 'ganadores/hilda-elia',
+    'yonathan guadalupe zeferino': 'ganadores/yonathan-guadalupe'
+  };
+  function fotoDe(n) { return FOTOS[String(n || '').toLowerCase().trim()] || ''; }
+  function abrirFoto(src) { $('lbImg').src = src; $('lb').classList.remove('hide'); }
   function iniciales(n) { return String(n || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join(''); }
   function pintarGanadores(r) {
     var lista = (r && r.ganadores) || [];
     if (!lista.length) return;
     $('listaGanadoresPub').innerHTML = lista.map(function (g, i) {
-      return '<div class="gcard"><div class="ph">' + (g.foto ? '<img loading="lazy" alt="" src="' + esc(g.foto) + '">' : '<div class="ini">' + esc(iniciales(g.nombre)) + '</div>') +
+      return '<div class="gcard"><div class="ph">' + (fotoDe(g.nombre) ? '<img loading="lazy" alt="Flyer de ' + esc(g.nombre) + '" src="' + fotoDe(g.nombre) + '-mini.jpg" onclick="abrirFoto(\'' + fotoDe(g.nombre) + '.jpg\')">' : '<div class="ini">' + esc(iniciales(g.nombre)) + '</div>') +
         '</div><div class="gi"><span class="gb">' + lugarCorto(g.premio, i) + ' lugar</span><div class="gn">' + esc(g.nombre) +
         '</div><div class="gp">' + esc(g.evento) + (g.fecha ? ' · ' + esc(g.fecha) : '') + '</div></div></div>';
     }).join('');
