@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Sorteo Villa Medusa</title>
+<style>
+  :root{
+    --bg:#050505; --card:#111113; --line:#2a2a2e; --text:#f2f2f4; --muted:#9a9aa2;
+    --silver:linear-gradient(135deg,#f7f7f7 0%,#bfc1c6 35%,#8d9096 55%,#e6e7ea 80%,#a9abb0 100%);
+    --ok:#3ddc84; --err:#ff5c6c;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{min-height:100vh;background:radial-gradient(ellipse at top,#1b1b1f 0%,#050505 60%)}
+  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 60px}
+  .wide{max-width:900px}
+  .plata{background:var(--silver);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header{text-align:center;padding:8px 0 18px}
+  .logos{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+  .logo{font-weight:900;letter-spacing:.06em;line-height:1;text-transform:uppercase}
+  .logo.jc{font-size:30px}
+  .logo.jc small{display:block;font-size:11px;letter-spacing:.45em;font-weight:600;margin-top:3px}
+  .logo.cb{font-size:18px;font-style:italic;border:1.5px solid #8d9096;border-radius:6px;padding:6px 10px}
+  .x{color:var(--muted);font-size:18px}
+  .logoimg{height:96px;width:auto;max-width:42vw;object-fit:contain;border-radius:10px}
+  .logoimg.jc{filter:grayscale(1) brightness(1.4) contrast(1.15)}
+  h1{font-size:26px;margin:16px 0 4px}
+  .sub{color:var(--muted);font-size:14px;margin:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px}
+  label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+  input{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0a0a0b;color:var(--text);font-size:16px}
+  input:focus{outline:none;border-color:#bfc1c6}
+  button{width:100%;padding:15px;border:0;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;
+    background:var(--silver);color:#0a0a0a;letter-spacing:.03em;margin-top:16px}
+  button:disabled{opacity:.5;cursor:wait}
+  button.sec{background:#1d1d21;color:var(--text);border:1px solid var(--line)}
+  .msg{margin-top:14px;padding:12px;border-radius:10px;font-size:15px;display:none}
+  .msg.ok{display:block;background:rgba(61,220,132,.12);border:1px solid var(--ok)}
+  .msg.err{display:block;background:rgba(255,92,108,.12);border:1px solid var(--err)}
+  .estado{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  .pill{font-size:12px;padding:6px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+  .pill b{color:var(--text)}
+  .premios{display:grid;gap:12px}
+  .premios{gap:8px!important}
+  .premio{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0a0a0b}
+  .premio .lugar{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#0a0a0a;background:var(--silver)}
+  .premio .pt{font-weight:800;font-size:16px}
+  .premio .pd{font-size:13px;color:var(--muted);line-height:1.4;margin-top:2px}
+  .nota{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+  .hide{display:none!important}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+  footer a{color:var(--muted)}
+  /* Admin */
+  .tabs{display:flex;gap:8px;margin-top:16px}
+  .tabs button{margin:0}
+  .tabs button:not(.on){background:#1d1d21;color:var(--text);border:1px solid var(--line)}
+  .rueda{font-size:clamp(26px,7vw,48px);font-weight:900;text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center;padding:10px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .grid3 button{margin:0}
+  .gan{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0;font-size:15px}
+  .contador{display:flex;gap:10px;margin-top:12px}
+  .contador div{flex:1;text-align:center;background:#0a0a0b;border:1px solid var(--line);border-radius:12px;padding:10px}
+  .contador b{display:block;font-size:26px}
+  .fila{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .fila .n{font-weight:700}
+  .fila .t{font-size:12px;color:var(--muted)}
+  .fila button{width:auto;margin:0;padding:10px 14px;font-size:14px;white-space:nowrap}
+  .fila.llego .n{color:var(--ok)}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  .pop{animation:pop .6s ease-out}
+  .gev{margin-top:14px}
+  .gev h3{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;text-align:center}
+  .gpub{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0a0a0b;margin-bottom:8px}
+  .gpub .lugar{flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#0a0a0a;background:var(--silver)}
+  .gpub .nom{font-weight:800;font-size:17px}
+  .gpub .pr{font-size:13px;color:var(--muted)}
+  /* ===== Diseño nuevo ===== */
+  .top{padding:4px 0 6px}
+  .logos.mini .logoimg{height:58px}
+  .countdown{text-align:center;margin:8px 0 6px}
+  .cdnums{display:flex;justify-content:center;align-items:flex-start;gap:6px}
+  .cdnums div{display:flex;flex-direction:column;align-items:center;min-width:58px}
+  .cdnums b{font-size:44px;font-weight:300;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+  .cdnums span{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+  .cdnums i{font-style:normal;font-size:32px;color:var(--muted);line-height:1.1}
+  .cdlbl{font-size:22px;font-weight:900;letter-spacing:.06em;margin-top:8px}
+  .headline{font-size:40px;line-height:1.02;font-weight:900;text-transform:uppercase;margin:18px 0 6px;letter-spacing:-.01em}
+  .evline{color:var(--muted);font-size:14px;margin:0 0 14px}
+  .hero{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0a0a0b}
+  .hero img{width:100%;display:block;max-height:420px;object-fit:cover;object-position:top}
+  .host{margin-top:14px}
+  .host .hl{display:inline-block;font-size:12px;font-weight:700;background:#1d1d21;border:1px solid var(--line);border-radius:99px;padding:4px 10px;color:var(--muted)}
+  .hostrow{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .hostrow img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+  .hostrow img.jc{filter:grayscale(1) brightness(1.4) contrast(1.15)}
+  .hostrow div{flex:1;display:flex;flex-direction:column}
+  .hostrow b{font-size:16px}.hostrow span{font-size:13px;color:var(--muted)}
+  .ttl{margin:0 0 10px;font-size:20px}
+  .txt{margin:0;color:#d4d4d8;line-height:1.5;font-size:15px}
+  .acc details{border:1px solid var(--line);border-radius:12px;background:#0a0a0b;margin-bottom:8px;overflow:hidden}
+  .acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px}
+  .acc summary::-webkit-details-marker{display:none}
+  .acc summary .lugar{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0a0a0a;background:var(--silver)}
+  .acc summary b{flex:1;font-size:16px}
+  .acc summary .chev{color:var(--muted);transition:transform .2s}
+  .acc details[open] .chev{transform:rotate(180deg)}
+  .acc ul{list-style:none;margin:0;padding:0 14px 12px 60px}
+  .acc li{font-size:14px;padding:3px 0;color:#d4d4d8}
+  .acc li::before{content:"✅ ";}
+  .carrusel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+  .gcard{flex:0 0 72%;max-width:240px;scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;background:#0a0a0b;overflow:hidden;text-align:center}
+  .gcard .ph{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#2a2a2e,#0a0a0b)}
+  .gcard .ph img{width:100%;height:100%;object-fit:cover}
+  .gcard .ini{width:96px;height:96px;border-radius:50%;background:var(--silver);color:#0a0a0a;font-weight:900;font-size:34px;display:flex;align-items:center;justify-content:center}
+  .gcard .gi{padding:10px}
+  .gcard .gn{font-weight:800;font-size:15px}
+  .gcard .gp{font-size:12px;color:var(--muted);margin-top:2px}
+  .gcard .gb{display:inline-block;font-size:11px;font-weight:800;color:#0a0a0a;background:var(--silver);border-radius:99px;padding:2px 8px;margin-bottom:4px}
+  .reglas{margin:0;padding-left:18px;color:#d4d4d8;font-size:14px;line-height:1.6}
+  .sticky{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(5,5,5,.98) 60%,rgba(5,5,5,0));z-index:20;transition:transform .25s}
+  .sticky button{max-width:528px;margin:0 auto;display:block;font-size:17px;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,.6)}
+  .sticky.oculto{transform:translateY(110%)}
+  #vistaRegistro{padding-bottom:70px}
+</style>
+</head>
+<body>
+<div id="app" class="wrap">
+  <header class="top">
+    <div class="logos mini">
+      <img class="logoimg jc" alt="JC Promotions" src="https://lh3.googleusercontent.com/d/18oeSmWKtB7QNBGKvp-f5NzVDix4RRzgD=w600">
+      <span class="x">×</span>
+      <img class="logoimg" alt="Conexion Boys" src="https://lh3.googleusercontent.com/d/1k-3GUZczDbPTFaoY1Qn2pJqx8vs51UAD=w600">
+    </div>
+  </header>
+
+  <!-- ===== Registro (público) ===== -->
+  <section id="vistaRegistro">
+    <div class="countdown" id="countdown">
+      <div class="cdnums">
+        <div><b id="cdD">--</b><span>Días</span></div><i>:</i>
+        <div><b id="cdH">--</b><span>Horas</span></div><i>:</i>
+        <div><b id="cdM">--</b><span>Min</span></div><i>:</i>
+        <div><b id="cdS">--</b><span>Seg</span></div>
+      </div>
+      <div class="cdlbl plata" id="cdLbl">HASTA EL SORTEO</div>
+    </div>
+
+    <h1 class="headline plata" id="titular">Cargando…</h1>
+    <p class="evline"><span id="evento"></span> · <span id="lugar"></span></p>
+
+    <div class="hero hide" id="hero"><img id="heroImg" alt="Sorteo Villa Medusa"></div>
+
+    <div class="host">
+      <span class="hl">Organizado por</span>
+      <div class="hostrow">
+        <img src="https://lh3.googleusercontent.com/d/18oeSmWKtB7QNBGKvp-f5NzVDix4RRzgD=w600" class="jc" alt=""><div><b>JC Promotions</b><span>× Conexion Boys</span></div>
+        <img src="https://lh3.googleusercontent.com/d/1k-3GUZczDbPTFaoY1Qn2pJqx8vs51UAD=w600" alt="">
+      </div>
+    </div>
+
+    <div class="estado" id="estado"></div>
+
+    <div class="card" id="registro">
+      <h2 class="plata ttl">Regístrate gratis</h2>
+      <form id="form" autocomplete="on">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="given-name" autocomplete="given-name" required>
+        <label for="apellido">Apellido</label>
+        <input id="apellido" name="family-name" autocomplete="family-name" required>
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" type="tel" inputmode="tel" autocomplete="tel" required>
+        <label for="correo">Correo</label>
+        <input id="correo" type="email" inputmode="email" autocomplete="email" required>
+        <button id="btnReg" type="submit">REGISTRARME</button>
+      </form>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="plata ttl">Resumen del sorteo</h2>
+      <p class="txt" id="resumen">Regístrate gratis y entra a la guest list de Villa Medusa y al sorteo de una mesa VIP para 8 personas con botellas. Te llega un correo de confirmación para mostrar en la puerta, y el ganador se anuncia en el Instagram oficial de Villa Medusa.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="plata ttl">Premios</h2>
+      <div class="acc" id="premios"></div>
+    </div>
+
+    <div class="card hide" id="cardGanadores">
+      <h2 class="plata ttl">🏆 Ganadores</h2>
+      <div class="carrusel" id="listaGanadoresPub"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="plata ttl">Reglas</h2>
+      <ul class="reglas">
+        <li>El registro es gratis y es una sola vez por persona.</li>
+        <li>Al registrarte entras a la guest list y al sorteo (si el sorteo sigue abierto).</li>
+        <li>Los ganadores de sorteos anteriores no vuelven a participar.</li>
+        <li>El ganador se anuncia en el Instagram oficial de Villa Medusa.</li>
+        <li>Muestra tu correo de confirmación en la puerta.</li>
+      </ul>
+    </div>
+    <footer><a href="#" id="linkAdmin">Staff</a></footer>
+  </section>
+
+  <!-- ===== Admin ===== -->
+  <section id="vistaAdmin" class="hide">
+    <div class="card" id="cajaLogin">
+      <label for="clave">Clave de staff</label>
+      <input id="clave" type="password">
+      <button id="btnLogin">ENTRAR</button>
+      <button class="sec" id="btnVolver">Volver al registro</button>
+      <div id="msgLogin" class="msg"></div>
+    </div>
+
+    <div id="panel" class="hide">
+      <div class="tabs">
+        <button id="tabSorteo" class="on">Sorteo</button>
+        <button id="tabGuest">Guest list</button>
+      </div>
+
+      <div id="pSorteo">
+        <div class="card">
+          <div class="pill" style="text-align:center">Participantes elegibles: <b id="nElegibles">–</b></div>
+          <div class="rueda plata" id="rueda">¿Quién ganará?</div>
+          <div class="grid3" id="botonesPremio"></div>
+          <div id="msgSorteo" class="msg"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 6px">Ganadores de este evento</h3>
+          <div id="listaGan"><p class="sub">Todavía no hay ganadores.</p></div>
+        </div>
+      </div>
+
+      <div id="pGuest" class="hide">
+        <div class="card">
+          <div class="contador">
+            <div><b id="cLlegaron">0</b><span class="sub">Llegaron</span></div>
+            <div><b id="cTotal">0</b><span class="sub">En la lista</span></div>
+          </div>
+          <label for="buscar">Buscar por nombre o teléfono</label>
+          <input id="buscar" type="search" placeholder="Ej. Ana o 787…">
+          <div id="lista"></div>
+          <button class="sec" id="btnRecargar">Actualizar lista</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="sticky" id="sticky"><button id="btnSticky" type="button">REGISTRARME GRATIS</button></div>
+
+<script>
+  var INFO = null, CLAVE = '', GUEST = [];
+  var $ = function (id) { return document.getElementById(id); };
+  var API = 'https://script.google.com/macros/s/AKfycbzcNaj5Z96S8sCbTnm8BfmJDHmgrr3PS-CpAxytmRFN_Yc38qogBn3zg-qAUSSgp0gC/exec';
+  var hayGAS = true;
+
+  function llamar(fn, args) {
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: fn, args: args || [] }),
+      redirect: 'follow'
+    }).then(function (r) {
+      if (!r.ok) throw new Error('No se pudo conectar. Intenta de nuevo.');
+      return r.json();
+    }).then(function (j) {
+      if (!j.ok) throw new Error(j.error || 'Error');
+      return j.data;
+    }, function (e) {
+      throw new Error(e && e.message && e.message.indexOf('No se pudo') === 0 ? e.message : 'No se pudo conectar. Revisa tu internet e intenta de nuevo.');
+    });
+  }
+  function mostrar(el, texto, tipo) { el.textContent = texto; el.className = 'msg ' + tipo; }
+  function dinero(v) { return '$' + Number(v || 0).toLocaleString('en-US'); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
+
+  var CIERRE = null;
+  function dos(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    if (!CIERRE) return;
+    var ms = CIERRE - Date.now();
+    if (ms <= 0) {
+      $('cdD').textContent = $('cdH').textContent = $('cdM').textContent = $('cdS').textContent = '00';
+      $('cdLbl').textContent = 'SORTEO FINALIZADO';
+      return;
+    }
+    var s = Math.floor(ms / 1000);
+    $('cdD').textContent = dos(Math.floor(s / 86400)); $('cdH').textContent = dos(Math.floor(s % 86400 / 3600));
+    $('cdM').textContent = dos(Math.floor(s % 3600 / 60)); $('cdS').textContent = dos(s % 60);
+  }
+  setInterval(tick, 1000);
+
+  function detalles(p) { return String(p.detalle || '').split(/\s*[·•|]\s*|\n/).filter(Boolean); }
+
+  function pintarInfo(info) {
+    INFO = info;
+    $('evento').textContent = info.evento;
+    $('lugar').textContent = info.lugar;
+    CIERRE = info.cierreSorteo || null;
+    if (!CIERRE) $('countdown').classList.add('hide');
+    tick();
+    var d1 = info.premios[0] ? detalles(info.premios[0])[0] : '';
+    $('titular').textContent = info.sorteoAbierto ? ('Gana ' + (d1 || 'un premio') + ' en ' + info.lugar) : '¡Ya tenemos ganadores!';
+    var hero = (info.premios[0] && info.premios[0].flyer) || '';
+    if (hero) { $('heroImg').src = hero; $('hero').classList.remove('hide'); }
+    $('estado').innerHTML =
+      '<span class="pill">Sorteo: <b>' + (info.sorteoAbierto ? 'abierto' : 'cerrado') + '</b>' +
+        (info.cierreSorteoTexto ? ' · cierra ' + esc(info.cierreSorteoTexto) : '') + '</span>' +
+      '<span class="pill">Guest list: <b>' + (info.guestListAbierta ? 'abierta' : 'cerrada') + '</b>' +
+        (info.cierreGuestListTexto ? ' · cierra ' + esc(info.cierreGuestListTexto) : '') + '</span>';
+    var LUGARES = ['1er lugar', '2do lugar', '3er lugar'];
+    $('premios').innerHTML = info.premios.map(function (p, i) {
+      var det = detalles(p);
+      return '<details' + (i === 0 ? ' open' : '') + '><summary><span class="lugar">' + (i + 1) + '</span><b>' +
+        (LUGARES[i] || (i + 1) + 'º lugar') + '</b><span class="chev">▾</span></summary>' +
+        '<ul>' + (det.length ? det : [p.nombre]).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></details>';
+    }).join('');
+    if (!info.guestListAbierta) {
+      $('btnReg').disabled = true; $('btnReg').textContent = 'REGISTRO CERRADO';
+      $('btnSticky').textContent = 'VER GANADORES';
+    }
+  }
+
+  // ---------- Botón fijo ----------
+  $('btnSticky').onclick = function () {
+    if (INFO && !INFO.guestListAbierta && !$('cardGanadores').classList.contains('hide')) {
+      $('cardGanadores').scrollIntoView({ behavior: 'smooth', block: 'start' }); return;
+    }
+    $('registro').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function () { $('nombre').focus(); }, 500);
+  };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) {
+      $('sticky').classList.toggle('oculto', es[0].isIntersecting);
+    }, { threshold: 0.15 }).observe($('registro'));
+  }
+
+  // ---------- Registro ----------
+  $('nombre').addEventListener('input', quitarNumeros);
+  $('apellido').addEventListener('input', quitarNumeros);
+  function quitarNumeros(e) { e.target.value = e.target.value.replace(/\d/g, ''); }
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var b = $('btnReg'); b.disabled = true; b.textContent = 'ENVIANDO…';
+    llamar('registrar', [{ nombre: $('nombre').value, apellido: $('apellido').value,
+      telefono: $('telefono').value, correo: $('correo').value }])
+      .then(function (r) { mostrar($('msg'), r.mensaje, 'ok'); $('form').reset(); })
+      .catch(function (err) { mostrar($('msg'), err.message, 'err'); })
+      .finally(function () { b.disabled = false; b.textContent = 'REGISTRARME'; });
+  });
+
+  // ---------- Navegación admin ----------
+  function irAdmin(s) {
+    $('vistaRegistro').classList.toggle("hide", s);
+    $('vistaAdmin').classList.toggle("hide", !s);
+    $('app').classList.toggle("wide", s);
+    $('sticky').classList.toggle('hide', s);
+  }
+  $('linkAdmin').onclick = function (e) { e.preventDefault(); irAdmin(true); $('clave').focus(); };
+  $('btnVolver').onclick = function () { irAdmin(false); };
+  $('clave').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('btnLogin').click(); });
+  $('btnLogin').onclick = function () {
+    var c = $('clave').value;
+    llamar('loginAdmin', [c]).then(function () {
+      CLAVE = c; $('cajaLogin').classList.add('hide'); $('panel').classList.remove('hide');
+      cargarSorteo(); cargarGuest();
+    }).catch(function (err) { mostrar($('msgLogin'), err.message, 'err'); });
+  };
+  $('tabSorteo').onclick = function () { tab(true); };
+  $('tabGuest').onclick = function () { tab(false); cargarGuest(); };
+  function tab(s) {
+    $('tabSorteo').classList.toggle('on', s); $('tabGuest').classList.toggle('on', !s);
+    $('pSorteo').classList.toggle('hide', !s); $('pGuest').classList.toggle('hide', s);
+  }
+
+  // ---------- Sorteo ----------
+  function cargarSorteo() {
+    llamar('estadoSorteo', [CLAVE]).then(function (r) {
+      pintarInfo(r.info);
+      $('nElegibles').textContent = r.elegibles.length;
+      var hechos = r.ganadores.map(function (g) { return g.premio; });
+      $('botonesPremio').innerHTML = r.info.premios.map(function (p, i) {
+        var hecho = hechos.indexOf(p.nombre) >= 0;
+        return '<button data-n="' + (i + 1) + '"' + (hecho ? ' disabled' : '') + '>' +
+          (hecho ? '✓ ' : 'GIRAR · ') + esc(p.nombre) + '<br><small>' + dinero(p.valor) + '</small></button>';
+      }).join('');
+      Array.prototype.forEach.call($('botonesPremio').querySelectorAll('button'), function (b) {
+        b.onclick = function () { girar(Number(b.dataset.n), b); };
+      });
+      $('listaGan').innerHTML = r.ganadores.length ? r.ganadores.map(function (g) {
+        return '<div class="gan"><span><b>' + esc(g.nombre) + '</b><br><span class="sub">' + esc(g.premio) + '</span></span><span class="plata" style="font-weight:900">' + dinero(g.valor) + '</span></div>';
+      }).join('') : '<p class="sub">Todavía no hay ganadores.</p>';
+    }).catch(function (err) { mostrar($('msgSorteo'), err.message, 'err'); });
+  }
+
+  function girar(n, boton) {
+    var botones = $('botonesPremio').querySelectorAll('button');
+    Array.prototype.forEach.call(botones, function (b) { b.disabled = true; });
+    $('msgSorteo').className = 'msg';
+    var rueda = $('rueda'); rueda.classList.remove('pop'); rueda.textContent = 'Girando…';
+    llamar('girarSorteo', [CLAVE, n]).then(function (r) {
+      var nombres = r.nombres, t = 0, total = 3500 + Math.random() * 1000, paso = 50;
+      (function tick() {
+        rueda.textContent = nombres[Math.floor(Math.random() * nombres.length)];
+        t += paso; paso = Math.min(paso * 1.07, 400);
+        if (t < total) return setTimeout(tick, paso);
+        rueda.textContent = r.ganador;
+        rueda.classList.add('pop');
+        mostrar($('msgSorteo'), '🎉 ' + r.ganador + ' gana ' + r.premio.nombre + ' (' + dinero(r.premio.valor) + ' en consumo en Villa Medusa)', 'ok');
+        cargarSorteo();
+      })();
+    }).catch(function (err) {
+      rueda.textContent = '¿Quién ganará?';
+      mostrar($('msgSorteo'), err.message, 'err'); cargarSorteo();
+    });
+  }
+
+  // ---------- Guest list ----------
+  function cargarGuest() {
+    llamar('guestList', [CLAVE]).then(function (r) { GUEST = r.lista; pintarGuest(); })
+      .catch(function (err) { $('lista').innerHTML = '<p class="sub">' + esc(err.message) + '</p>'; });
+  }
+  function normal(s) { return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function pintarGuest() {
+    var q = normal($('buscar').value.trim()), qd = q.replace(/\D/g, '');
+    var llegaron = GUEST.filter(function (g) { return g.llego; }).length;
+    $('cLlegaron').textContent = llegaron; $('cTotal').textContent = GUEST.length;
+    var vis = GUEST.filter(function (g) {
+      if (!q) return true;
+      return normal(g.nombre).indexOf(q) >= 0 || (qd.length >= 3 && g.telefono.indexOf(qd) >= 0);
+    }).slice(0, 200);
+    $('lista').innerHTML = vis.length ? vis.map(function (g) {
+      return '<div class="fila' + (g.llego ? ' llego' : '') + '"><div><div class="n">' + esc(g.nombre) + '</div>' +
+        '<div class="t">••• ' + esc(g.telefono.slice(-4)) + (g.llego ? ' · llegó ' + esc(g.hora) : '') + '</div></div>' +
+        '<button data-id="' + esc(g.id) + '" class="' + (g.llego ? 'sec' : '') + '">' + (g.llego ? 'Deshacer' : 'Llegó ✓') + '</button></div>';
+    }).join('') : '<p class="sub">Sin resultados.</p>';
+    Array.prototype.forEach.call($('lista').querySelectorAll('button'), function (b) {
+      b.onclick = function () {
+        var g = GUEST.filter(function (x) { return x.id === b.dataset.id; })[0];
+        b.disabled = true;
+        llamar('marcarLlegada', [CLAVE, g.id, !g.llego]).then(function (r) {
+          g.llego = !g.llego; g.hora = r.hora; pintarGuest();
+        }).catch(function (err) { alert(err.message); b.disabled = false; });
+      };
+    });
+  }
+  $('buscar').addEventListener('input', pintarGuest);
+  $('btnRecargar').onclick = cargarGuest;
+
+  // ---------- Ganadores públicos ----------
+  function lugarCorto(premio, i) {
+    var t = String(premio || '').toLowerCase();
+    if (t.indexOf('primer') >= 0 || t.indexOf('1') === 0) return '1er';
+    if (t.indexOf('segundo') >= 0 || t.indexOf('2') === 0) return '2do';
+    if (t.indexOf('tercer') >= 0 || t.indexOf('3') === 0) return '3er';
+    return (i + 1) + 'º';
+  }
+  function iniciales(n) { return String(n || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join(''); }
+  function pintarGanadores(r) {
+    var lista = (r && r.ganadores) || [];
+    if (!lista.length) return;
+    $('listaGanadoresPub').innerHTML = lista.map(function (g, i) {
+      return '<div class="gcard"><div class="ph">' + (g.foto ? '<img loading="lazy" alt="" src="' + esc(g.foto) + '">' : '<div class="ini">' + esc(iniciales(g.nombre)) + '</div>') +
+        '</div><div class="gi"><span class="gb">' + lugarCorto(g.premio, i) + ' lugar</span><div class="gn">' + esc(g.nombre) +
+        '</div><div class="gp">' + esc(g.evento) + (g.fecha ? ' · ' + esc(g.fecha) : '') + '</div></div></div>';
+    }).join('');
+    $('cardGanadores').classList.remove('hide');
+  }
+
+  // ---------- Inicio ----------
+  llamar('ganadoresPublicos').then(pintarGanadores).catch(function () {});
+  if (hayGAS) {
+    llamar('obtenerInfo').then(pintarInfo).catch(function (e) { $('evento').textContent = 'Error'; mostrar($('msg'), e.message, 'err'); });
+  } else {
+    pintarInfo({ evento: 'Sorteo del 11/21', lugar: 'Villa Medusa', sorteoAbierto: true, guestListAbierta: true,
+      cierreSorteoTexto: '21/11 6:00 PM', cierreGuestListTexto: '21/11 11:59 PM',
+      premios: [{ nombre: 'Primer premio', valor: 1000 }, { nombre: 'Segundo premio', valor: 500 }, { nombre: 'Tercer premio', valor: 250 }] });
+  }
+</script>
+</body>
+</html>
