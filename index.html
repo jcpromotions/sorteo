@@ -35,6 +35,8 @@
     background:var(--silver);color:#0a0a0a;letter-spacing:.03em;margin-top:16px}
   button:disabled{opacity:.5;cursor:wait}
   button.sec{background:#1d1d21;color:var(--text);border:1px solid var(--line)}
+  .acepto{display:flex;gap:10px;align-items:flex-start;margin:16px 0 4px;font-size:12.5px;line-height:1.45;color:var(--muted);cursor:pointer}
+  .acepto input{width:20px;height:20px;min-width:20px;padding:0;margin:1px 0 0;accent-color:#d9dade}
   .msg{margin-top:14px;padding:12px;border-radius:10px;font-size:15px;display:none}
   .msg.ok{display:block;background:rgba(61,220,132,.12);border:1px solid var(--ok)}
   .msg.err{display:block;background:rgba(255,92,108,.12);border:1px solid var(--err)}
@@ -177,6 +179,10 @@
         <input id="telefono" type="tel" inputmode="tel" autocomplete="tel" required>
         <label for="correo">Correo</label>
         <input id="correo" type="email" inputmode="email" autocomplete="email" required>
+        <label class="acepto" for="acepto">
+          <input id="acepto" type="checkbox" required>
+          <span>Acepto que JC Promotions, Conexion Boys y Villa Medusa guarden mis datos (nombre, teléfono y correo) y los usen para enviarme publicidad, promociones, alertas y eventos futuros por mensaje de texto, llamada o correo, incluso con mensajes automáticos. Aceptar no es requisito de compra. Puedo darme de baja cuando quiera respondiendo STOP a un mensaje o pidiéndolo por correo. Pueden aplicar tarifas de mensajes y datos. Mis datos no se venden a terceros.</span>
+        </label>
         <button id="btnReg" type="submit">REGISTRARME</button>
       </form>
       <div id="msg" class="msg"></div>
@@ -355,7 +361,7 @@
     e.preventDefault();
     var b = $('btnReg'); b.disabled = true; b.textContent = 'ENVIANDO…';
     llamar('registrar', [{ nombre: $('nombre').value, apellido: $('apellido').value,
-      telefono: $('telefono').value, correo: $('correo').value }])
+      telefono: $('telefono').value, correo: $('correo').value, acepta: $('acepto').checked }])
       .then(function (r) { mostrar($('msg'), r.mensaje, 'ok'); $('form').reset(); })
       .catch(function (err) { mostrar($('msg'), err.message, 'err'); })
       .finally(function () { b.disabled = false; b.textContent = 'REGISTRARME'; });
