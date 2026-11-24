@@ -75,30 +75,99 @@
   .gpub .lugar{flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#0a0a0a;background:var(--silver)}
   .gpub .nom{font-weight:800;font-size:17px}
   .gpub .pr{font-size:13px;color:var(--muted)}
+  /* ===== Diseño nuevo ===== */
+  .top{padding:4px 0 6px}
+  .logos.mini .logoimg{height:58px}
+  .countdown{text-align:center;margin:8px 0 6px}
+  .cdnums{display:flex;justify-content:center;align-items:flex-start;gap:6px}
+  .cdnums div{display:flex;flex-direction:column;align-items:center;min-width:58px}
+  .cdnums b{font-size:44px;font-weight:300;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+  .cdnums span{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+  .cdnums i{font-style:normal;font-size:32px;color:var(--muted);line-height:1.1}
+  .cdlbl{font-size:22px;font-weight:900;letter-spacing:.06em;margin-top:8px}
+  .headline{font-size:40px;line-height:1.02;font-weight:900;text-transform:uppercase;margin:18px 0 6px;letter-spacing:-.01em}
+  .evline{color:var(--muted);font-size:14px;margin:0 0 14px}
+  .hero{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0a0a0b}
+  .hero img{width:100%;display:block;max-height:420px;object-fit:cover;object-position:top}
+  .host{margin-top:14px}
+  .host .hl{display:inline-block;font-size:12px;font-weight:700;background:#1d1d21;border:1px solid var(--line);border-radius:99px;padding:4px 10px;color:var(--muted)}
+  .hostrow{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .hostrow img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+  .hostrow img.jc{filter:grayscale(1) brightness(1.4) contrast(1.15)}
+  .hostrow div{flex:1;display:flex;flex-direction:column}
+  .hostrow b{font-size:16px}.hostrow span{font-size:13px;color:var(--muted)}
+  .ttl{margin:0 0 10px;font-size:20px}
+  .txt{margin:0;color:#d4d4d8;line-height:1.5;font-size:15px}
+  .acc details{border:1px solid var(--line);border-radius:12px;background:#0a0a0b;margin-bottom:8px;overflow:hidden}
+  .acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px}
+  .acc summary::-webkit-details-marker{display:none}
+  .acc summary .lugar{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0a0a0a;background:var(--silver)}
+  .acc summary b{flex:1;font-size:16px}
+  .acc summary .chev{color:var(--muted);transition:transform .2s}
+  .acc details[open] .chev{transform:rotate(180deg)}
+  .acc ul{list-style:none;margin:0;padding:0 14px 12px 60px}
+  .acc li{font-size:14px;padding:3px 0;color:#d4d4d8}
+  .acc li::before{content:"✅ ";}
+  .carrusel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+  .gcard{flex:0 0 38%;max-width:150px;scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;background:#0a0a0b;overflow:hidden;text-align:center}
+  .gcard .ph{aspect-ratio:9/14;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#2a2a2e,#0a0a0b)}
+  .gcard .ph img{width:100%;height:100%;object-fit:cover;object-position:top;cursor:zoom-in}
+  .gcard .ini{width:64px!important;height:64px!important;font-size:24px!important}
+  .gcard .gn{font-size:13px!important}
+  .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+  .lb img{max-width:100%;max-height:100%;border-radius:12px}
+  .lb button{position:absolute;top:12px;right:12px;width:auto;margin:0;padding:8px 14px;background:#1d1d21;color:#fff;border:1px solid var(--line)}
+  .gcard .ini{width:96px;height:96px;border-radius:50%;background:var(--silver);color:#0a0a0a;font-weight:900;font-size:34px;display:flex;align-items:center;justify-content:center}
+  .gcard .gi{padding:10px}
+  .gcard .gn{font-weight:800;font-size:15px}
+  .gcard .gp{font-size:12px;color:var(--muted);margin-top:2px}
+  .gcard .gb{display:inline-block;font-size:11px;font-weight:800;color:#0a0a0a;background:var(--silver);border-radius:99px;padding:2px 8px;margin-bottom:4px}
+  .reglas{margin:0;padding-left:18px;color:#d4d4d8;font-size:14px;line-height:1.6}
+  .sticky{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(5,5,5,.98) 60%,rgba(5,5,5,0));z-index:20;transition:transform .25s}
+  .sticky button{max-width:528px;margin:0 auto;display:block;font-size:17px;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,.6)}
+  .sticky.oculto{transform:translateY(110%)}
+  #vistaRegistro{padding-bottom:70px}
 </style>
 </head>
 <body>
 <div id="app" class="wrap">
-  <header>
-    <div class="logos">
+  <header class="top">
+    <div class="logos mini">
       <img class="logoimg jc" alt="JC Promotions" src="https://lh3.googleusercontent.com/d/18oeSmWKtB7QNBGKvp-f5NzVDix4RRzgD=w600">
       <span class="x">×</span>
       <img class="logoimg" alt="Conexion Boys" src="https://lh3.googleusercontent.com/d/1k-3GUZczDbPTFaoY1Qn2pJqx8vs51UAD=w600">
     </div>
-    <h1 class="plata" id="evento">Cargando…</h1>
-    <p class="sub" id="lugar"></p>
-    <div class="estado" id="estado"></div>
   </header>
 
   <!-- ===== Registro (público) ===== -->
   <section id="vistaRegistro">
-    <div class="card hide" id="cardGanadores">
-      <h2 class="plata" style="margin:0 0 4px;font-size:22px;text-align:center">🏆 Ganadores</h2>
-      <p class="sub" style="text-align:center;margin-bottom:6px">¡Felicidades a todos los ganadores!</p>
-      <div id="listaGanadoresPub"></div>
+    <div class="countdown" id="countdown">
+      <div class="cdnums">
+        <div><b id="cdD">--</b><span>Días</span></div><i>:</i>
+        <div><b id="cdH">--</b><span>Horas</span></div><i>:</i>
+        <div><b id="cdM">--</b><span>Min</span></div><i>:</i>
+        <div><b id="cdS">--</b><span>Seg</span></div>
+      </div>
+      <div class="cdlbl plata" id="cdLbl">HASTA EL SORTEO</div>
     </div>
 
-    <div class="card">
+    <h1 class="headline plata" id="titular">Cargando…</h1>
+    <p class="evline"><span id="evento"></span> · <span id="lugar"></span></p>
+
+    <div class="hero hide" id="hero"><img id="heroImg" alt="Sorteo Villa Medusa"></div>
+
+    <div class="host">
+      <span class="hl">Organizado por</span>
+      <div class="hostrow">
+        <img src="https://lh3.googleusercontent.com/d/18oeSmWKtB7QNBGKvp-f5NzVDix4RRzgD=w600" class="jc" alt=""><div><b>JC Promotions</b><span>× Conexion Boys</span></div>
+        <img src="https://lh3.googleusercontent.com/d/1k-3GUZczDbPTFaoY1Qn2pJqx8vs51UAD=w600" alt="">
+      </div>
+    </div>
+
+    <div class="estado" id="estado"></div>
+
+    <div class="card" id="registro">
+      <h2 class="plata ttl">Regístrate gratis</h2>
       <form id="form" autocomplete="on">
         <label for="nombre">Nombre</label>
         <input id="nombre" name="given-name" autocomplete="given-name" required>
@@ -114,9 +183,30 @@
     </div>
 
     <div class="card">
-      <h2 class="plata" style="margin:0 0 12px;font-size:20px">Premios</h2>
-      <div class="premios" id="premios"></div>
-      <p class="nota">Premios para disfrutar en Villa Medusa. Cada persona gana una sola vez.</p>
+      <h2 class="plata ttl">Resumen del sorteo</h2>
+      <p class="txt" id="resumen">Regístrate gratis y entra a la guest list de Villa Medusa y al sorteo de una mesa VIP para 8 personas con botellas. Te llega un correo de confirmación para mostrar en la puerta, y el ganador se anuncia en el Instagram oficial de Villa Medusa.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="plata ttl">Premios</h2>
+      <div class="acc" id="premios"></div>
+    </div>
+
+    <div class="card hide" id="cardGanadores">
+      <h2 class="plata ttl">🏆 Ganadores</h2>
+      <div class="carrusel" id="listaGanadoresPub"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="plata ttl">Reglas</h2>
+      <ul class="reglas">
+        <li>Debes tener 21 años o más.</li>
+        <li>El registro es gratis y es una sola vez por persona.</li>
+        <li>Al registrarte entras a la guest list y al sorteo (si el sorteo sigue abierto).</li>
+        <li>Los ganadores de sorteos anteriores no vuelven a participar.</li>
+        <li>El ganador se anuncia en el Instagram oficial de Villa Medusa.</li>
+        <li>Muestra tu correo de confirmación en la puerta.</li>
+      </ul>
     </div>
     <footer><a href="#" id="linkAdmin">Staff</a></footer>
   </section>
@@ -166,6 +256,9 @@
   </section>
 </div>
 
+<div class="lb hide" id="lb" onclick="this.classList.add('hide')"><img id="lbImg" alt=""><button type="button">Cerrar ✕</button></div>
+<div class="sticky" id="sticky"><button id="btnSticky" type="button">REGISTRARME GRATIS</button></div>
+
 <script>
   var INFO = null, CLAVE = '', GUEST = [];
   var $ = function (id) { return document.getElementById(id); };
@@ -192,10 +285,35 @@
   function dinero(v) { return '$' + Number(v || 0).toLocaleString('en-US'); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
 
+  var CIERRE = null;
+  function dos(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    if (!CIERRE) return;
+    var ms = CIERRE - Date.now();
+    if (ms <= 0) {
+      $('cdD').textContent = $('cdH').textContent = $('cdM').textContent = $('cdS').textContent = '00';
+      $('cdLbl').textContent = 'SORTEO FINALIZADO';
+      return;
+    }
+    var s = Math.floor(ms / 1000);
+    $('cdD').textContent = dos(Math.floor(s / 86400)); $('cdH').textContent = dos(Math.floor(s % 86400 / 3600));
+    $('cdM').textContent = dos(Math.floor(s % 3600 / 60)); $('cdS').textContent = dos(s % 60);
+  }
+  setInterval(tick, 1000);
+
+  function detalles(p) { return String(p.detalle || '').split(/\s*[·•|]\s*|\n/).filter(Boolean); }
+
   function pintarInfo(info) {
     INFO = info;
     $('evento').textContent = info.evento;
     $('lugar').textContent = info.lugar;
+    CIERRE = info.cierreSorteo || null;
+    if (!CIERRE) $('countdown').classList.add('hide');
+    tick();
+    var d1 = info.premios[0] ? detalles(info.premios[0])[0] : '';
+    $('titular').textContent = info.sorteoAbierto ? ('Gana ' + (d1 || 'un premio') + ' en ' + info.lugar) : '¡Ya tenemos ganadores!';
+    var hero = (info.premios[0] && info.premios[0].flyer) || '';
+    if (hero) { $('heroImg').src = hero; $('hero').classList.remove('hide'); }
     $('estado').innerHTML =
       '<span class="pill">Sorteo: <b>' + (info.sorteoAbierto ? 'abierto' : 'cerrado') + '</b>' +
         (info.cierreSorteoTexto ? ' · cierra ' + esc(info.cierreSorteoTexto) : '') + '</span>' +
@@ -203,15 +321,29 @@
         (info.cierreGuestListTexto ? ' · cierra ' + esc(info.cierreGuestListTexto) : '') + '</span>';
     var LUGARES = ['1er lugar', '2do lugar', '3er lugar'];
     $('premios').innerHTML = info.premios.map(function (p, i) {
-      var det = String(p.detalle || '').split(/\s*[·•|]\s*|\n/).filter(Boolean);
-      return '<div class="premio"><div class="lugar">' + (i + 1) + '</div><div>' +
-        '<div class="pt">' + (LUGARES[i] || (i + 1) + 'º lugar') + '</div>' +
-        (det.length ? '<div class="pd">' + det.map(esc).join(' · ') + '</div>' : '<div class="pd">' + esc(p.nombre) + '</div>') +
-        '</div></div>';
+      var det = detalles(p);
+      return '<details' + (i === 0 ? ' open' : '') + '><summary><span class="lugar">' + (i + 1) + '</span><b>' +
+        (LUGARES[i] || (i + 1) + 'º lugar') + '</b><span class="chev">▾</span></summary>' +
+        '<ul>' + (det.length ? det : [p.nombre]).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></details>';
     }).join('');
     if (!info.guestListAbierta) {
       $('btnReg').disabled = true; $('btnReg').textContent = 'REGISTRO CERRADO';
+      $('btnSticky').textContent = 'VER GANADORES';
     }
+  }
+
+  // ---------- Botón fijo ----------
+  $('btnSticky').onclick = function () {
+    if (INFO && !INFO.guestListAbierta && !$('cardGanadores').classList.contains('hide')) {
+      $('cardGanadores').scrollIntoView({ behavior: 'smooth', block: 'start' }); return;
+    }
+    $('registro').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function () { $('nombre').focus(); }, 500);
+  };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) {
+      $('sticky').classList.toggle('oculto', es[0].isIntersecting);
+    }, { threshold: 0.15 }).observe($('registro'));
   }
 
   // ---------- Registro ----------
@@ -234,6 +366,7 @@
     $('vistaRegistro').classList.toggle("hide", s);
     $('vistaAdmin').classList.toggle("hide", !s);
     $('app').classList.toggle("wide", s);
+    $('sticky').classList.toggle('hide', s);
   }
   $('linkAdmin').onclick = function (e) { e.preventDefault(); irAdmin(true); $('clave').focus(); };
   $('btnVolver').onclick = function () { irAdmin(false); };
@@ -334,19 +467,22 @@
     if (t.indexOf('tercer') >= 0 || t.indexOf('3') === 0) return '3er';
     return (i + 1) + 'º';
   }
+  // Flyers de los ganadores (archivos en la carpeta ganadores/ del repo)
+  var FOTOS = {
+    'leidy la': 'ganadores/leidy-la',
+    'hilda elia': 'ganadores/hilda-elia',
+    'yonathan guadalupe zeferino': 'ganadores/yonathan-guadalupe'
+  };
+  function fotoDe(n) { return FOTOS[String(n || '').toLowerCase().trim()] || ''; }
+  function abrirFoto(src) { $('lbImg').src = src; $('lb').classList.remove('hide'); }
+  function iniciales(n) { return String(n || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join(''); }
   function pintarGanadores(r) {
     var lista = (r && r.ganadores) || [];
     if (!lista.length) return;
-    var grupos = [], porEvento = {};
-    lista.forEach(function (g) {
-      if (!porEvento[g.evento]) { porEvento[g.evento] = []; grupos.push(g.evento); }
-      porEvento[g.evento].push(g);
-    });
-    $('listaGanadoresPub').innerHTML = grupos.map(function (ev) {
-      return '<div class="gev"><h3>' + esc(ev) + '</h3>' + porEvento[ev].map(function (g, i) {
-        return '<div class="gpub"><div class="lugar">' + lugarCorto(g.premio, i) + '</div><div><div class="nom">' + esc(g.nombre) +
-          '</div><div class="pr">' + esc(g.premio) + (g.fecha ? ' · ' + esc(g.fecha) : '') + '</div></div></div>';
-      }).join('') + '</div>';
+    $('listaGanadoresPub').innerHTML = lista.map(function (g, i) {
+      return '<div class="gcard"><div class="ph">' + (fotoDe(g.nombre) ? '<img loading="lazy" alt="Flyer de ' + esc(g.nombre) + '" src="' + fotoDe(g.nombre) + '-mini.jpg" onclick="abrirFoto(\'' + fotoDe(g.nombre) + '.jpg\')">' : '<div class="ini">' + esc(iniciales(g.nombre)) + '</div>') +
+        '</div><div class="gi"><span class="gb">' + lugarCorto(g.premio, i) + ' lugar</span><div class="gn">' + esc(g.nombre) +
+        '</div><div class="gp">' + esc(g.evento) + (g.fecha ? ' · ' + esc(g.fecha) : '') + '</div></div></div>';
     }).join('');
     $('cardGanadores').classList.remove('hide');
   }
