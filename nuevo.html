@@ -30,6 +30,8 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px}
   label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
   input{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0a0a0b;color:var(--text);font-size:16px}
+  textarea{width:100%;min-height:130px;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0a0a0b;color:var(--text);font:inherit;font-size:16px;resize:vertical}
+  .flyerPrev{width:100%;border-radius:10px;margin-top:10px}
   input:focus{outline:none;border-color:#bfc1c6}
   button{width:100%;padding:15px;border:0;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;
     background:var(--silver);color:#0a0a0a;letter-spacing:.03em;margin-top:16px}
@@ -231,6 +233,7 @@
       <div class="tabs">
         <button id="tabSorteo" class="on">Sorteo</button>
         <button id="tabGuest">Guest list</button>
+        <button id="tabCont">Contactos</button>
       </div>
 
       <div id="pSorteo">
@@ -256,6 +259,38 @@
           <input id="buscar" type="search" placeholder="Ej. Ana o 787…">
           <div id="lista"></div>
           <button class="sec" id="btnRecargar">Actualizar lista</button>
+        </div>
+      </div>
+
+      <div id="pCont" class="hide">
+        <div class="card">
+          <h3 style="margin:0 0 6px">Contactos para publicidad</h3>
+          <div class="contador">
+            <div><b id="cAcept">–</b><span class="sub">Aceptaron publicidad</span></div>
+            <div><b id="cTodos">–</b><span class="sub">Registrados en total</span></div>
+          </div>
+          <p class="sub">La lista solo trae a las personas que marcaron la casilla de aceptar publicidad. Si alguien responde STOP o pide que no le escriban, no le vuelvas a mandar.</p>
+          <button id="btnCsv">DESCARGAR LISTA (EXCEL)</button>
+          <div id="msgCont" class="msg"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 6px">Mandar correo de publicidad</h3>
+          <p class="sub">Le llega a todos los que aceptaron publicidad (menos los que se dieron de baja). Gmail deja mandar unos 100 correos al día. Si hay más personas, vuelve a darle a "Mandar a todos" mañana con el mismo nombre de campaña y sigue con los que faltan, sin repetir.</p>
+          <p class="sub" id="cuotaInfo"></p>
+          <label for="cNombre">Nombre de la campaña (solo para ti)</label>
+          <input id="cNombre" placeholder="Ej. Sábado 28 de noviembre">
+          <label for="cAsunto">Asunto del correo</label>
+          <input id="cAsunto" placeholder="Ej. 🔥 Este sábado en Villa Medusa">
+          <label for="cMensaje">Mensaje</label>
+          <textarea id="cMensaje" placeholder="Escribe aquí el mensaje. El correo empieza solo con «Hola» y el nombre de cada persona."></textarea>
+          <label for="cFlyer">Flyer (foto, opcional)</label>
+          <input id="cFlyer" type="file" accept="image/*">
+          <img id="cFlyerPrev" class="flyerPrev hide" alt="">
+          <label for="cPrueba">Tu correo, para mandarte una prueba primero</label>
+          <input id="cPrueba" type="email" inputmode="email" placeholder="tucorreo@gmail.com">
+          <button class="sec" id="btnPrueba">ENVIARME UNA PRUEBA</button>
+          <button id="btnMandar">MANDAR A TODOS</button>
+          <div id="msgCamp" class="msg"></div>
         </div>
       </div>
     </div>
@@ -384,12 +419,87 @@
       cargarSorteo(); cargarGuest();
     }).catch(function (err) { mostrar($('msgLogin'), err.message, 'err'); });
   };
-  $('tabSorteo').onclick = function () { tab(true); };
-  $('tabGuest').onclick = function () { tab(false); cargarGuest(); };
-  function tab(s) {
-    $('tabSorteo').classList.toggle('on', s); $('tabGuest').classList.toggle('on', !s);
-    $('pSorteo').classList.toggle('hide', !s); $('pGuest').classList.toggle('hide', s);
+  $('tabSorteo').onclick = function () { tab('Sorteo'); };
+  $('tabGuest').onclick = function () { tab('Guest'); cargarGuest(); };
+  $('tabCont').onclick = function () { tab('Cont'); cargarCont(); };
+  function tab(n) {
+    ['Sorteo', 'Guest', 'Cont'].forEach(function (k) {
+      $('tab' + k).classList.toggle('on', k === n); $('p' + k).classList.toggle('hide', k !== n);
+    });
   }
+
+  // ---------- Contactos para publicidad ----------
+  var CONTACTOS = null;
+  function cargarCont() {
+    return llamar('contactosPublicidad', [CLAVE]).then(function (r) {
+      CONTACTOS = r.contactos;
+      $('cAcept').textContent = r.contactos.length; $('cTodos').textContent = r.total;
+      $('cuotaInfo').textContent = 'Correos disponibles hoy: ' + Math.max(0, r.cuotaCorreo - 15) +
+        (r.bajasCorreo ? ' · Se dieron de baja del correo: ' + r.bajasCorreo : '');
+      return r;
+    }).catch(function (err) { mostrar($('msgCont'), err.message, 'err'); });
+  }
+  // ---------- Correo de publicidad ----------
+  var FLYER = '';
+  $('cFlyer').onchange = function () {
+    var f = this.files && this.files[0]; FLYER = '';
+    $('cFlyerPrev').classList.add('hide');
+    if (!f) return;
+    var img = new Image();
+    img.onload = function () {
+      var w = Math.min(1000, img.width), h = Math.round(img.height * w / img.width);
+      var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      var url = cv.toDataURL('image/jpeg', 0.85);
+      FLYER = url.split(',')[1];
+      $('cFlyerPrev').src = url; $('cFlyerPrev').classList.remove('hide');
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(f);
+  };
+  function datosCamp(prueba) {
+    return { campana: $('cNombre').value, asunto: $('cAsunto').value, mensaje: $('cMensaje').value,
+      imagen: FLYER, prueba: prueba || '' };
+  }
+  function bloquear(si) { $('btnPrueba').disabled = si; $('btnMandar').disabled = si; }
+  $('btnPrueba').onclick = function () {
+    if (!$('cPrueba').value) { mostrar($('msgCamp'), 'Escribe tu correo para la prueba.', 'err'); return; }
+    bloquear(true); mostrar($('msgCamp'), 'Mandando la prueba…', 'ok');
+    llamar('enviarCampana', [CLAVE, datosCamp($('cPrueba').value)])
+      .then(function () { mostrar($('msgCamp'), 'Prueba enviada a ' + $('cPrueba').value + '. Revisa tu correo (y la carpeta de spam).', 'ok'); })
+      .catch(function (e) { mostrar($('msgCamp'), e.message, 'err'); })
+      .finally(function () { bloquear(false); });
+  };
+  $('btnMandar').onclick = function () {
+    var n = CONTACTOS ? CONTACTOS.length : 0;
+    if (!window.confirm('¿Mandar este correo a todos los que aceptaron publicidad (' + n + ' personas)? No se puede deshacer.')) return;
+    bloquear(true); mostrar($('msgCamp'), 'Mandando… no cierres la página.', 'ok');
+    llamar('enviarCampana', [CLAVE, datosCamp('')])
+      .then(function (r) {
+        var t = 'Listo: se mandaron ' + r.enviados + ' correos.';
+        if (r.pendientes) t += ' Faltan ' + r.pendientes + ' porque se llegó al límite del día. Mañana dale otra vez a "Mandar a todos" con el mismo nombre de campaña.';
+        mostrar($('msgCamp'), t, 'ok'); cargarCont();
+      })
+      .catch(function (e) { mostrar($('msgCamp'), e.message, 'err'); })
+      .finally(function () { bloquear(false); });
+  };
+
+  $('btnCsv').onclick = function () {
+    cargarCont().then(function () {
+      if (!CONTACTOS) return;
+      if (!CONTACTOS.length) { mostrar($('msgCont'), 'Todavía nadie ha aceptado publicidad.', 'err'); return; }
+      var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+      var filas = [['Nombre', 'Apellido', 'Telefono', 'Correo', 'Acepto publicidad']].concat(CONTACTOS.map(function (c) {
+        return [c.nombre, c.apellido, c.telefono, c.correo, c.acepto];
+      }));
+      var csv = '\ufeff' + filas.map(function (f) { return f.map(q).join(','); }).join('\r\n');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = 'contactos-publicidad-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      mostrar($('msgCont'), 'Lista descargada: ' + CONTACTOS.length + ' contactos.', 'ok');
+    });
+  };
 
   // ---------- Sorteo ----------
   function cargarSorteo() {
@@ -494,6 +604,16 @@
   }
 
   // ---------- Inicio ----------
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (!q.get('baja')) return;
+    var reg = $('registro');
+    reg.innerHTML = '<h2 class="plata ttl">Darse de baja</h2><div id="msgBaja" class="msg ok" style="display:block">Procesando…</div>';
+    reg.scrollIntoView();
+    llamar('darseDeBaja', [q.get('baja'), q.get('t')])
+      .then(function () { mostrar($('msgBaja'), 'Listo. Ya no te vamos a mandar más correos de publicidad.', 'ok'); })
+      .catch(function (e) { mostrar($('msgBaja'), e.message, 'err'); });
+  })();
   llamar('ganadoresPublicos').then(pintarGanadores).catch(function () {});
   if (hayGAS) {
     llamar('obtenerInfo').then(pintarInfo).catch(function (e) { $('evento').textContent = 'Error'; mostrar($('msg'), e.message, 'err'); });
