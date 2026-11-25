@@ -479,7 +479,7 @@
       var mes = Number(new Intl.DateTimeFormat('en-US', Object.assign({ month: 'numeric' }, o)).format(d)) - 1;
       dia = 'este ' + dias[idx]; fecha = dias[idx] + ' ' + num + ' de ' + meses[mes];
     }
-    var premio = (INFO && INFO.premios && INFO.premios[0] && INFO.premios[0].detalle) || 'VIP para 8 personas con botellas';
+    var premio = 'un VIP para 8 personas con botellas';
     $('cNombre').value = 'Sorteo y guest list ' + (fecha || new Date().toLocaleDateString('es'));
     $('cAsunto').value = '🎉 Sorteo GRATIS + Guest list ' + dia + ' en ' + lugar;
     $('cMensaje').value = '¡' + dia.charAt(0).toUpperCase() + dia.slice(1) + ' la fiesta es en ' + lugar + '! 🔥\n\n' +
