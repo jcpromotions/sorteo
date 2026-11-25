@@ -209,7 +209,8 @@
       <h2 class="plata ttl">Reglas</h2>
       <ul class="reglas">
         <li>Debes tener 21 años o más.</li>
-        <li>El registro es gratis y es una sola vez por persona.</li>
+        <li>El registro es gratis y es una vez por persona cada semana.</li>
+        <li>El registro en la guest list cierra a las 9:00 p.m. y con la guest list puedes entrar hasta las 12:00 a.m.</li>
         <li>Al registrarte entras a la guest list y al sorteo (si el sorteo sigue abierto).</li>
         <li>Los ganadores de sorteos anteriores no vuelven a participar.</li>
         <li>El ganador se anuncia en el Instagram oficial de Villa Medusa.</li>
@@ -364,7 +365,8 @@
       '<span class="pill">Sorteo: <b>' + (info.sorteoAbierto ? 'abierto' : 'cerrado') + '</b>' +
         (info.cierreSorteoTexto ? ' · cierra ' + esc(info.cierreSorteoTexto) : '') + '</span>' +
       '<span class="pill">Guest list: <b>' + (info.guestListAbierta ? 'abierta' : 'cerrada') + '</b>' +
-        (info.cierreGuestListTexto ? ' · cierra ' + esc(info.cierreGuestListTexto) : '') + '</span>';
+        (info.cierreGuestListTexto ? ' · registro hasta ' + esc(info.cierreGuestListTexto) : '') + '</span>' +
+      (info.entradaHasta ? '<span class="pill">Entrada con guest list hasta las <b>' + esc(info.entradaHasta) + '</b></span>' : '');
     var LUGARES = ['1er lugar', '2do lugar', '3er lugar'];
     $('premios').innerHTML = info.premios.map(function (p, i) {
       var det = detalles(p);
