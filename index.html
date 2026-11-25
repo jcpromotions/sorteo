@@ -231,6 +231,7 @@
       <div class="tabs">
         <button id="tabSorteo" class="on">Sorteo</button>
         <button id="tabGuest">Guest list</button>
+        <button id="tabCont">Contactos</button>
       </div>
 
       <div id="pSorteo">
@@ -256,6 +257,19 @@
           <input id="buscar" type="search" placeholder="Ej. Ana o 787…">
           <div id="lista"></div>
           <button class="sec" id="btnRecargar">Actualizar lista</button>
+        </div>
+      </div>
+
+      <div id="pCont" class="hide">
+        <div class="card">
+          <h3 style="margin:0 0 6px">Contactos para publicidad</h3>
+          <div class="contador">
+            <div><b id="cAcept">–</b><span class="sub">Aceptaron publicidad</span></div>
+            <div><b id="cTodos">–</b><span class="sub">Registrados en total</span></div>
+          </div>
+          <p class="sub">La lista solo trae a las personas que marcaron la casilla de aceptar publicidad. Si alguien responde STOP o pide que no le escriban, no le vuelvas a mandar.</p>
+          <button id="btnCsv">DESCARGAR LISTA (EXCEL)</button>
+          <div id="msgCont" class="msg"></div>
         </div>
       </div>
     </div>
@@ -384,12 +398,40 @@
       cargarSorteo(); cargarGuest();
     }).catch(function (err) { mostrar($('msgLogin'), err.message, 'err'); });
   };
-  $('tabSorteo').onclick = function () { tab(true); };
-  $('tabGuest').onclick = function () { tab(false); cargarGuest(); };
-  function tab(s) {
-    $('tabSorteo').classList.toggle('on', s); $('tabGuest').classList.toggle('on', !s);
-    $('pSorteo').classList.toggle('hide', !s); $('pGuest').classList.toggle('hide', s);
+  $('tabSorteo').onclick = function () { tab('Sorteo'); };
+  $('tabGuest').onclick = function () { tab('Guest'); cargarGuest(); };
+  $('tabCont').onclick = function () { tab('Cont'); cargarCont(); };
+  function tab(n) {
+    ['Sorteo', 'Guest', 'Cont'].forEach(function (k) {
+      $('tab' + k).classList.toggle('on', k === n); $('p' + k).classList.toggle('hide', k !== n);
+    });
   }
+
+  // ---------- Contactos para publicidad ----------
+  var CONTACTOS = null;
+  function cargarCont() {
+    return llamar('contactosPublicidad', [CLAVE]).then(function (r) {
+      CONTACTOS = r.contactos;
+      $('cAcept').textContent = r.contactos.length; $('cTodos').textContent = r.total;
+      return r;
+    }).catch(function (err) { mostrar($('msgCont'), err.message, 'err'); });
+  }
+  $('btnCsv').onclick = function () {
+    cargarCont().then(function () {
+      if (!CONTACTOS) return;
+      if (!CONTACTOS.length) { mostrar($('msgCont'), 'Todavía nadie ha aceptado publicidad.', 'err'); return; }
+      var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+      var filas = [['Nombre', 'Apellido', 'Telefono', 'Correo', 'Acepto publicidad']].concat(CONTACTOS.map(function (c) {
+        return [c.nombre, c.apellido, c.telefono, c.correo, c.acepto];
+      }));
+      var csv = '\ufeff' + filas.map(function (f) { return f.map(q).join(','); }).join('\r\n');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = 'contactos-publicidad-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      mostrar($('msgCont'), 'Lista descargada: ' + CONTACTOS.length + ' contactos.', 'ok');
+    });
+  };
 
   // ---------- Sorteo ----------
   function cargarSorteo() {
