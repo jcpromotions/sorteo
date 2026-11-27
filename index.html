@@ -130,6 +130,10 @@
   .gcard .gn{font-weight:800;font-size:15px}
   .gcard .gp{font-size:12px;color:var(--muted);margin-top:2px}
   .gcard .gb{display:inline-block;font-size:11px;font-weight:800;color:#0a0a0a;background:var(--silver);border-radius:99px;padding:2px 8px;margin-bottom:4px}
+  .gcard.prox{border:1px dashed var(--gold1)}
+  .gcard.prox .ph{background:radial-gradient(circle at 50% 35%,#5a1418,#0d0607)}
+  .gcard .qm{font-size:64px;font-weight:900;line-height:1;background:var(--silver);-webkit-background-clip:text;background-clip:text;color:transparent;animation:lat 1.8s ease-in-out infinite}
+  @keyframes lat{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}
   .reglas{margin:0;padding-left:18px;color:#d4d4d8;font-size:14px;line-height:1.6}
   .sticky{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(10,4,5,.98) 60%,rgba(10,4,5,0));z-index:20;transition:transform .25s}
   .sticky button{max-width:528px;margin:0 auto;display:block;font-size:17px;padding:16px;box-shadow:0 6px 24px rgba(196,22,28,.45)}
@@ -205,8 +209,18 @@
     </div>
 
     <div class="card hide" id="cardGanadores">
-      <h2 class="plata ttl">🏆 Ganadores</h2>
+      <h2 class="plata ttl">🏆 Ganadores de la semana pasada</h2>
       <div class="carrusel" id="listaGanadoresPub"></div>
+    </div>
+
+    <div class="card" id="cardProximos">
+      <h2 class="plata ttl">❓ Próximos ganadores este sábado</h2>
+      <p class="sub" style="margin-bottom:12px">¿Quién será? Regístrate y puedes ser tú.</p>
+      <div class="carrusel">
+        <div class="gcard prox"><div class="ph"><span class="qm">?</span></div><div class="gi"><span class="gb">1er lugar</span><div class="gn">¿Quién será?</div><div class="gp">Este sábado</div></div></div>
+        <div class="gcard prox"><div class="ph"><span class="qm">?</span></div><div class="gi"><span class="gb">2do lugar</span><div class="gn">¿Quién será?</div><div class="gp">Este sábado</div></div></div>
+        <div class="gcard prox"><div class="ph"><span class="qm">?</span></div><div class="gi"><span class="gb">3er lugar</span><div class="gn">¿Quién será?</div><div class="gp">Este sábado</div></div></div>
+      </div>
     </div>
 
     <div class="card">
