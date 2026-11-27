@@ -88,6 +88,13 @@
   .mesa .det{font-size:14px;color:#d4d4d8;margin-top:6px;line-height:1.45;white-space:pre-line}
   .mesa .acc2{display:flex;gap:8px;margin-top:10px}
   .mesa .acc2 button{margin:0;padding:10px;font-size:14px}
+  .mapa{position:relative;width:100%;aspect-ratio:730/540;margin-top:14px;border:1px solid var(--line);border-radius:12px;background:#0d0607;overflow:hidden}
+  .mapa .z{position:absolute;transform:translate(-50%,-50%);font-size:9px;letter-spacing:.08em;color:var(--muted);white-space:nowrap;pointer-events:none}
+  .mapa button{position:absolute;transform:translate(-50%,-50%);width:auto;min-width:27px;height:27px;padding:0 4px;margin:0;border-radius:99px;font-size:11px;font-weight:800;background:#2a0d10;color:var(--text);border:1px solid #b8862b}
+  .mapa button.res{background:#c4161c;border-color:#f2c75c;color:#fff}
+  .mapa button.llego{background:var(--ok);border-color:var(--ok);color:#0a0a0a}
+  .leyenda{display:flex;gap:12px;justify-content:center;font-size:12px;color:var(--muted);margin-top:8px}
+  .leyenda i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
   @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
   .pop{animation:pop .6s ease-out}
@@ -305,6 +312,9 @@
             <div><b id="mCPers">0</b><span class="sub">Personas</span></div>
             <div><b id="mCLleg">0</b><span class="sub">Llegaron</span></div>
           </div>
+          <div class="mapa" id="mMapa"></div>
+          <div class="leyenda"><span><i style="background:#2a0d10;border:1px solid #b8862b"></i>Libre</span><span><i style="background:#c4161c"></i>Apartada</span><span><i style="background:var(--ok)"></i>Llegaron</span></div>
+          <p class="sub" style="text-align:center;margin-top:6px">Toca una mesa para apartarla o ver quién la tiene.</p>
           <button id="btnNuevaMesa">+ APARTAR MESA</button>
           <button class="sec" id="btnNuevosInv">+ ANOTAR INVITADOS NUESTROS</button>
           <label for="mBuscar">Buscar</label>
@@ -322,7 +332,7 @@
           </div>
           <div class="grid2">
             <div><label for="mNoche">Noche</label><input id="mNoche" type="date"></div>
-            <div><label for="mMesa" id="mMesaLbl">Mesa</label><input id="mMesa" placeholder="Ej. VIP 3"></div>
+            <div><label for="mMesa" id="mMesaLbl">Mesa</label><input id="mMesa" list="mMesasLista" placeholder="Ej. 22 o VIP 1"><datalist id="mMesasLista"></datalist></div>
           </div>
           <label for="mNombre">A nombre de</label>
           <input id="mNombre" placeholder="Nombre y apellido">
@@ -722,9 +732,30 @@
     sel.innerHTML = lista.map(function (n) { return '<option value="' + esc(n) + '">' + esc(fechaBonita(n)) + '</option>'; }).join('');
     sel.value = lista.indexOf(antes) >= 0 ? antes : (lista.filter(function (n) { return n >= (MHOY || fechaLocal(new Date())); })[0] || lista[0]);
   }
+  // Mapa de mesas de Villa Medusa (posición en % sobre el dibujo)
+  var MAPA = [['11',8,20],['10',20,20],['VIP 1',35,30],['VIP 2',48,30],['29',63,32],['30',77,31],['31',88,31],['32',86,40],
+    ['15',9,43],['16',19,43],['28',66,44],['33',93,52],['20',22,52],['27',61,56],['37',75,59],['36',86,59],['21',24,65],
+    ['26',53,64],['22',34,71],['23',41,71],['24',50,80],['25',61,80],['34',93,77],['35',94,93]];
+  var ZONAS = [['BAR',14,4],['STAGE',42,15],['DANCE FLOOR',42,47],['BATHROOM',82,7],['BAR',79,97],['MAIN DOOR',42,92],['CONTROL BOOTH',26,87],['PECADOS ROOM',14,80]];
+  $('mMesasLista').innerHTML = MAPA.map(function (t) { return '<option value="' + t[0] + '">'; }).join('');
+  function mismaMesa(a, b) { return normal(String(a).replace(/^mesa\s*/i, '')).replace(/\s+/g, '') === normal(b).replace(/\s+/g, ''); }
+  function pintarMapa(deNoche) {
+    $('mMapa').innerHTML = ZONAS.map(function (z) { return '<span class="z" style="left:' + z[1] + '%;top:' + z[2] + '%">' + z[0] + '</span>'; }).join('') +
+      MAPA.map(function (t) {
+        var m = deNoche.filter(function (x) { return x.mesa && mismaMesa(x.mesa, t[0]); })[0];
+        return '<button type="button" data-mesa="' + t[0] + '" class="' + (m ? (m.llego ? 'llego' : 'res') : '') + '" style="left:' + t[1] + '%;top:' + t[2] + '%">' + t[0].replace('VIP ', 'V') + '</button>';
+      }).join('');
+    Array.prototype.forEach.call($('mMapa').querySelectorAll('button'), function (b) {
+      b.onclick = function () {
+        var m = deNoche.filter(function (x) { return x.mesa && mismaMesa(x.mesa, b.dataset.mesa); })[0];
+        if (m) abrirFormMesa(m); else { abrirFormMesa(null, 'Mesa'); $('mMesa').value = b.dataset.mesa; }
+      };
+    });
+  }
   function pintarMesas() {
     var noche = $('mNocheVer').value, q = normal($('mBuscar').value.trim());
     var deNoche = MESAS.filter(function (m) { return m.noche === noche; });
+    pintarMapa(deNoche);
     $('mCMesas').textContent = deNoche.filter(function (m) { return m.tipo === 'Mesa'; }).length;
     $('mCPers').textContent = deNoche.reduce(function (s, m) {
       var inv = m.invitados ? m.invitados.split('\n').filter(function (x) { return x.trim(); }).length : 0;
