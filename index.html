@@ -855,7 +855,8 @@
   $('btnGuardarPromos').onclick = function () {
     var b = this;
     var lista = $('mPromosTxt').value.split('\n').map(function (l) {
-      var p = l.split('|'); return { nombre: (p[0] || '').trim(), botella: (p.slice(1).join('|') || '').trim() };
+      var p = l.split('|'), n = (p[0] || '').trim(), v = PROMOS.filter(function (x) { return x.nombre === n; })[0];
+      return { nombre: n, botella: (p.slice(1).join('|') || '').trim(), detalle: v ? v.detalle : '' };
     }).filter(function (p) { return p.nombre; });
     b.disabled = true;
     llamar('guardarPromos', [CLAVE, lista]).then(function (r) {
