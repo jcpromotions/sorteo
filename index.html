@@ -75,6 +75,20 @@
   .fila .t{font-size:12px;color:var(--muted)}
   .fila button{width:auto;margin:0;padding:10px 14px;font-size:14px;white-space:nowrap}
   .fila.llego .n{color:var(--ok)}
+  select{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0d0607;color:var(--text);font-size:16px}
+  .tabs button{flex:1;min-width:0;padding:13px 4px;font-size:14px}
+  .seg{display:flex;gap:8px}.seg button{margin:0;flex:1}
+  .seg button:not(.on){background:#2a0d10;color:var(--text);border:1px solid var(--line)}
+  .mesa{border:1px solid var(--line);border-radius:12px;background:#0d0607;padding:12px;margin-top:10px}
+  .mesa.llego{border-color:var(--ok)}
+  .mesa .top1{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .mesa .mt{font-weight:800;font-size:17px}
+  .mesa .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;margin-right:4px;background:#2a0d10;border:1px solid var(--line);color:var(--muted)}
+  .mesa .tag.promo{border-color:#b8862b;color:#f2c75c}
+  .mesa .det{font-size:14px;color:#d4d4d8;margin-top:6px;line-height:1.45;white-space:pre-line}
+  .mesa .acc2{display:flex;gap:8px;margin-top:10px}
+  .mesa .acc2 button{margin:0;padding:10px;font-size:14px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
   @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
   .pop{animation:pop .6s ease-out}
   .gev{margin-top:14px}
@@ -252,6 +266,7 @@
       <div class="tabs">
         <button id="tabSorteo" class="on">Sorteo</button>
         <button id="tabGuest">Guest list</button>
+        <button id="tabMesas">Mesas</button>
         <button id="tabCont">Contactos</button>
       </div>
 
@@ -278,6 +293,66 @@
           <input id="buscar" type="search" placeholder="Ej. Ana o 787…">
           <div id="lista"></div>
           <button class="sec" id="btnRecargar">Actualizar lista</button>
+        </div>
+      </div>
+
+      <div id="pMesas" class="hide">
+        <div class="card">
+          <label for="mNocheVer" style="margin-top:0">Noche</label>
+          <select id="mNocheVer"></select>
+          <div class="contador">
+            <div><b id="mCMesas">0</b><span class="sub">Mesas apartadas</span></div>
+            <div><b id="mCPers">0</b><span class="sub">Personas</span></div>
+            <div><b id="mCLleg">0</b><span class="sub">Llegaron</span></div>
+          </div>
+          <button id="btnNuevaMesa">+ APARTAR MESA</button>
+          <button class="sec" id="btnNuevosInv">+ ANOTAR INVITADOS NUESTROS</button>
+          <label for="mBuscar">Buscar</label>
+          <input id="mBuscar" type="search" placeholder="Nombre, mesa, promo…">
+          <div id="mLista"></div>
+          <button class="sec" id="btnMRecargar">Actualizar lista</button>
+          <div id="msgMesas" class="msg"></div>
+        </div>
+
+        <div class="card hide" id="mForm">
+          <h3 style="margin:0 0 10px" id="mFormTit">Apartar mesa</h3>
+          <div class="seg">
+            <button type="button" id="mTipoMesa" class="on">Mesa apartada</button>
+            <button type="button" id="mTipoInv">Invitados nuestros</button>
+          </div>
+          <div class="grid2">
+            <div><label for="mNoche">Noche</label><input id="mNoche" type="date"></div>
+            <div><label for="mMesa" id="mMesaLbl">Mesa</label><input id="mMesa" placeholder="Ej. VIP 3"></div>
+          </div>
+          <label for="mNombre">A nombre de</label>
+          <input id="mNombre" placeholder="Nombre y apellido">
+          <label for="mTel">Teléfono (opcional)</label>
+          <input id="mTel" type="tel" inputmode="tel">
+          <div id="mBloquePromo">
+            <label for="mPromo">¿Por promo?</label>
+            <select id="mPromo"></select>
+            <input id="mPromoOtra" class="hide" placeholder="Escribe la promo" style="margin-top:8px">
+            <label for="mBotella">Botella</label>
+            <input id="mBotella" placeholder="Ej. Buchanan's 12">
+          </div>
+          <label for="mPersonas">¿Cuántas personas?</label>
+          <input id="mPersonas" type="number" inputmode="numeric" min="0">
+          <label for="mInvitados">Personas que van (una por línea)</label>
+          <textarea id="mInvitados" style="min-height:110px" placeholder="Ana Pérez&#10;Luis Gómez"></textarea>
+          <label for="mNotas">Notas (opcional)</label>
+          <input id="mNotas" placeholder="Ej. llega a las 11, cumpleaños">
+          <button id="btnGuardarMesa">GUARDAR</button>
+          <button class="sec" id="btnCancelarMesa">Cancelar</button>
+          <button class="sec hide" id="btnBorrarMesa" style="color:var(--err)">Borrar</button>
+          <div id="msgMForm" class="msg"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin:0 0 6px">Lista de promos</h3>
+          <p class="sub">Una promo por línea. Si la promo trae botella, ponla después de una raya <b>|</b>, así se llena sola. Ej.: <i>Mesa VIP $300 | Buchanan's 12</i></p>
+          <textarea id="mPromosTxt" style="min-height:110px" placeholder="Promo cumpleaños | Botella de champaña&#10;Mesa VIP $300 | Buchanan's 12"></textarea>
+          <button class="sec" id="btnGuardarPromos">GUARDAR PROMOS</button>
+          <div id="msgPromos" class="msg"></div>
         </div>
       </div>
 
@@ -445,8 +520,9 @@
   $('tabSorteo').onclick = function () { tab('Sorteo'); };
   $('tabGuest').onclick = function () { tab('Guest'); cargarGuest(); };
   $('tabCont').onclick = function () { tab('Cont'); cargarCont(); };
+  $('tabMesas').onclick = function () { tab('Mesas'); cargarMesas(); };
   function tab(n) {
-    ['Sorteo', 'Guest', 'Cont'].forEach(function (k) {
+    ['Sorteo', 'Guest', 'Mesas', 'Cont'].forEach(function (k) {
       $('tab' + k).classList.toggle('on', k === n); $('p' + k).classList.toggle('hide', k !== n);
     });
   }
@@ -619,6 +695,145 @@
   }
   $('buscar').addEventListener('input', pintarGuest);
   $('btnRecargar').onclick = cargarGuest;
+
+  // ---------- Mesas apartadas e invitados nuestros ----------
+  var MESAS = [], PROMOS = [], MEDIT = null, MTIPO = 'Mesa', MHOY = '';
+  function fechaLocal(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function proximoSabado() { var d = new Date(); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return fechaLocal(d); }
+  var DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  function fechaBonita(f) {
+    var p = String(f).split('-'); if (p.length !== 3) return f || 'Sin fecha';
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()];
+  }
+  function cargarMesas() {
+    return llamar('mesasDatos', [CLAVE]).then(function (r) {
+      MESAS = r.lista; PROMOS = r.promos; MHOY = r.hoy;
+      $('mPromosTxt').value = PROMOS.map(function (p) { return p.nombre + (p.botella ? ' | ' + p.botella : ''); }).join('\n');
+      pintarNoches(); pintarMesas();
+    }).catch(function (err) { mostrar($('msgMesas'), err.message, 'err'); });
+  }
+  function pintarNoches() {
+    var sel = $('mNocheVer'), antes = sel.value;
+    var noches = {}; noches[proximoSabado()] = 1;
+    MESAS.forEach(function (m) { if (m.noche) noches[m.noche] = 1; });
+    var lista = Object.keys(noches).sort();
+    sel.innerHTML = lista.map(function (n) { return '<option value="' + esc(n) + '">' + esc(fechaBonita(n)) + '</option>'; }).join('');
+    sel.value = lista.indexOf(antes) >= 0 ? antes : (lista.filter(function (n) { return n >= (MHOY || fechaLocal(new Date())); })[0] || lista[0]);
+  }
+  function pintarMesas() {
+    var noche = $('mNocheVer').value, q = normal($('mBuscar').value.trim());
+    var deNoche = MESAS.filter(function (m) { return m.noche === noche; });
+    $('mCMesas').textContent = deNoche.filter(function (m) { return m.tipo === 'Mesa'; }).length;
+    $('mCPers').textContent = deNoche.reduce(function (s, m) {
+      var inv = m.invitados ? m.invitados.split('\n').filter(function (x) { return x.trim(); }).length : 0;
+      return s + (Number(m.personas) || inv || 1);
+    }, 0);
+    $('mCLleg').textContent = deNoche.filter(function (m) { return m.llego; }).length;
+    var vis = deNoche.filter(function (m) {
+      return !q || normal([m.mesa, m.nombre, m.promo, m.botella, m.invitados, m.notas, m.telefono].join(' ')).indexOf(q) >= 0;
+    });
+    $('mLista').innerHTML = vis.length ? vis.map(function (m) {
+      var t = m.tipo === 'Mesa' ? 'Mesa ' + esc(m.mesa) : 'Invitados nuestros' + (m.mesa ? ' · ' + esc(m.mesa) : '');
+      var tags = (m.promo ? '<span class="tag promo">Promo: ' + esc(m.promo) + '</span>' : '') +
+        (m.botella ? '<span class="tag">🍾 ' + esc(m.botella) + '</span>' : '') +
+        (m.personas !== '' ? '<span class="tag">' + esc(m.personas) + ' personas</span>' : '');
+      return '<div class="mesa' + (m.llego ? ' llego' : '') + '"><div class="top1"><div><div class="mt">' + t + '</div>' +
+        '<div class="t sub">A nombre de <b>' + esc(m.nombre) + '</b>' + (m.telefono ? ' · ' + esc(m.telefono) : '') +
+        (m.llego ? ' · <span style="color:var(--ok)">llegó ' + esc(m.hora) + '</span>' : '') + '</div></div></div>' +
+        (tags ? '<div style="margin-top:6px">' + tags + '</div>' : '') +
+        (m.invitados ? '<div class="det">' + esc(m.invitados) + '</div>' : '') +
+        (m.notas ? '<div class="det" style="color:var(--muted)">📝 ' + esc(m.notas) + '</div>' : '') +
+        '<div class="acc2"><button data-l="' + esc(m.id) + '" class="' + (m.llego ? 'sec' : '') + '">' + (m.llego ? 'Deshacer' : 'Llegó ✓') + '</button>' +
+        '<button class="sec" data-e="' + esc(m.id) + '">Editar</button></div></div>';
+    }).join('') : '<p class="sub" style="margin-top:12px">No hay nada anotado para esta noche.</p>';
+    Array.prototype.forEach.call($('mLista').querySelectorAll('button[data-l]'), function (b) {
+      b.onclick = function () {
+        var m = MESAS.filter(function (x) { return x.id === b.dataset.l; })[0];
+        b.disabled = true;
+        llamar('marcarMesaLlego', [CLAVE, m.id, !m.llego]).then(function (r) { m.llego = !m.llego; m.hora = r.hora; pintarMesas(); })
+          .catch(function (err) { alert(err.message); b.disabled = false; });
+      };
+    });
+    Array.prototype.forEach.call($('mLista').querySelectorAll('button[data-e]'), function (b) {
+      b.onclick = function () { abrirFormMesa(MESAS.filter(function (x) { return x.id === b.dataset.e; })[0]); };
+    });
+  }
+  function tipoMesa(t) {
+    MTIPO = t;
+    $('mTipoMesa').classList.toggle('on', t === 'Mesa'); $('mTipoInv').classList.toggle('on', t !== 'Mesa');
+    $('mMesaLbl').textContent = t === 'Mesa' ? 'Mesa' : 'Mesa (si tienen)';
+    $('mFormTit').textContent = (MEDIT ? 'Cambiar ' : '') + (t === 'Mesa' ? (MEDIT ? 'mesa' : 'Apartar mesa') : (MEDIT ? 'invitados' : 'Anotar invitados nuestros'));
+  }
+  function pintarSelectPromo(valor) {
+    var ops = ['<option value="">No, sin promo</option>'].concat(PROMOS.map(function (p) {
+      return '<option value="' + esc(p.nombre) + '">' + esc(p.nombre) + '</option>';
+    })).concat(['<option value="__otra">Otra promo…</option>']);
+    $('mPromo').innerHTML = ops.join('');
+    var existe = !valor || PROMOS.some(function (p) { return p.nombre === valor; });
+    $('mPromo').value = existe ? (valor || '') : '__otra';
+    $('mPromoOtra').value = existe ? '' : valor;
+    $('mPromoOtra').classList.toggle('hide', existe);
+  }
+  $('mPromo').onchange = function () {
+    var v = $('mPromo').value;
+    $('mPromoOtra').classList.toggle('hide', v !== '__otra');
+    var p = PROMOS.filter(function (x) { return x.nombre === v; })[0];
+    if (p && p.botella) $('mBotella').value = p.botella;
+  };
+  function abrirFormMesa(m, tipo) {
+    MEDIT = m || null;
+    m = m || {};
+    $('mNoche').value = m.noche || $('mNocheVer').value || proximoSabado();
+    $('mMesa').value = m.mesa || ''; $('mNombre').value = m.nombre || ''; $('mTel').value = m.telefono || '';
+    $('mBotella').value = m.botella || ''; $('mPersonas').value = m.personas === undefined ? '' : m.personas;
+    $('mInvitados').value = m.invitados || ''; $('mNotas').value = m.notas || '';
+    pintarSelectPromo(m.promo || '');
+    tipoMesa(m.tipo || tipo || 'Mesa');
+    $('btnBorrarMesa').classList.toggle('hide', !MEDIT);
+    $('msgMForm').className = 'msg';
+    $('mForm').classList.remove('hide');
+    $('mForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cerrarFormMesa() { $('mForm').classList.add('hide'); MEDIT = null; }
+  $('btnNuevaMesa').onclick = function () { abrirFormMesa(null, 'Mesa'); };
+  $('btnNuevosInv').onclick = function () { abrirFormMesa(null, 'Invitados'); };
+  $('mTipoMesa').onclick = function () { tipoMesa('Mesa'); };
+  $('mTipoInv').onclick = function () { tipoMesa('Invitados'); };
+  $('btnCancelarMesa').onclick = cerrarFormMesa;
+  $('btnGuardarMesa').onclick = function () {
+    var b = this, promo = $('mPromo').value === '__otra' ? $('mPromoOtra').value : $('mPromo').value;
+    var d = { id: MEDIT ? MEDIT.id : '', noche: $('mNoche').value, tipo: MTIPO, mesa: $('mMesa').value, nombre: $('mNombre').value,
+      telefono: $('mTel').value, promo: promo, botella: $('mBotella').value, personas: $('mPersonas').value,
+      invitados: $('mInvitados').value, notas: $('mNotas').value };
+    b.disabled = true;
+    llamar('guardarMesa', [CLAVE, d]).then(function () {
+      b.disabled = false; cerrarFormMesa(); $('mNocheVer').value = d.noche;
+      mostrar($('msgMesas'), 'Guardado ✓', 'ok');
+      return cargarMesas().then(function () { $('mNocheVer').value = d.noche; pintarMesas(); });
+    }).catch(function (err) { b.disabled = false; mostrar($('msgMForm'), err.message, 'err'); });
+  };
+  $('btnBorrarMesa').onclick = function () {
+    if (!MEDIT || !confirm('¿Borrar esta mesa? No se puede deshacer.')) return;
+    var b = this; b.disabled = true;
+    llamar('borrarMesa', [CLAVE, MEDIT.id]).then(function () {
+      b.disabled = false; cerrarFormMesa(); mostrar($('msgMesas'), 'Borrado.', 'ok'); cargarMesas();
+    }).catch(function (err) { b.disabled = false; mostrar($('msgMForm'), err.message, 'err'); });
+  };
+  $('btnGuardarPromos').onclick = function () {
+    var b = this;
+    var lista = $('mPromosTxt').value.split('\n').map(function (l) {
+      var p = l.split('|'); return { nombre: (p[0] || '').trim(), botella: (p.slice(1).join('|') || '').trim() };
+    }).filter(function (p) { return p.nombre; });
+    b.disabled = true;
+    llamar('guardarPromos', [CLAVE, lista]).then(function (r) {
+      b.disabled = false; PROMOS = r.promos; mostrar($('msgPromos'), 'Promos guardadas ✓ (' + PROMOS.length + ')', 'ok');
+    }).catch(function (err) { b.disabled = false; mostrar($('msgPromos'), err.message, 'err'); });
+  };
+  $('mNocheVer').onchange = pintarMesas;
+  $('mBuscar').addEventListener('input', pintarMesas);
+  $('btnMRecargar').onclick = cargarMesas;
 
   // ---------- Ganadores públicos ----------
   function lugarCorto(premio, i) {
